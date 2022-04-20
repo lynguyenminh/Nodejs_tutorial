@@ -4,7 +4,7 @@ const port = 5000
 
 
 
-app.get('/caigido', function(req, res){
+app.get('/', function(req, res){
     res.send('Hello!!!')
 })
 
