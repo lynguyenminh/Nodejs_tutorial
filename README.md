@@ -98,3 +98,67 @@ Thông thường khi import package thì nên để trước dòng `const app = 
     const app = express()
     app.use(morgan('combined'))
 
+# 3. Render giao diện bằng express-handlebars
+## 3.1. Cài express-handlebars
+
+    npm install --save express-handlebars
+
+## 3.2. Cấu trúc thư mục khi sử dụng express-handlebars 
+Cần chú ý kĩ cấu trúc thư mục của views, đây là thư mục mặc định của express-handlebars.
+
+    views
+    ├── home.handlebars
+    ├── news.handlebars
+    └── layouts
+        └── main.handlebars
+    └── partials
+        ├── header.handlebars
+        ├── footer.handlebars
+
+    
+Trong cấu trúc này:
+* main.handlebars là file bố cục của toàn bộ trang web. Nó quy định header, body, footer đặt ở đâu trong trang web.
+* header, footer.handlebars là code riêng cho từng phần, từng chức năng, sẽ được gọi lại trong main.handlebars.
+* home, news.handlebars là nội dung chính trong từng file.
+
+main.handlebars
+
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+        <body>
+            // gọi lại file header
+            {{> header}}
+
+            // phần thân của web, trong file này thì ghi body, lúc render thì gọi file home hay news.handlebars
+            {{{ body }}}
+
+            // gọi lại file footer
+            {{> footer}}
+        </body>
+    </html>
+
+
+## 3.3. Code trong file app.js
+
+    // gọi package
+    const {engine} = require('express-handlebars');
+
+    app.engine('handlebars', engine());
+    app.set('view engine', 'handlebars');
+
+    // xác định thu mục views cho handlebars
+    app.set('views', './src/views');
+
+    // Render ra html để hiển thị cho người dùng. Nó sẽ render ra file main.handlebars, thay chỗ {{{body}}} thành file truyền trong hàm render.
+    app.get('/home', function(req, res){
+        res.render('home')
+    })
+    app.get('/tin_tuc', function(req, res){
+        res.render('news')
+    })
