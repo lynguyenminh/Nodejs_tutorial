@@ -11,6 +11,11 @@
     npm install --save-dev <package_name> 
 
 Nếu sử dụng --save thì package được lưu trong dependencies, tức là nó sẽ có tác dụng trong lúc phát triển dự án này và lúc triển khai dự án trong thực tế. Nếu sử dụng --save-dev thì package được lưu trong "devDependencies" nên nó có tác dụng trong lúc phát triển dự án, chứ khi triển khai thực tế thì nó không có tác dụng. Những gói hỗ trợ debug, refresh code thì nên dùng --save-dev.
+Tìm hiểu thêm: https://viblo.asia/p/tong-quan-ve-npm-4P856dy3ZY3aa
+
+"express" là framework theo ta xuyên suốt dự án nodejs, nên cài --save
+
+    npm install --save express
 
 ## 1.2. Code file chính của project app.js
 
@@ -69,4 +74,27 @@ Giờ để sử dụng nodemon thì chạy lệnh sau:
     "start":"nodemon src/app.js",
 sau đó ra terminal và chạy: npm start
 ## 2.2. Trả về trạng thái trang web khi refresh trang bằng morgan
+
+Docs: https://www.npmjs.com/package/morgan
+
+Mỗi lần trang web của ta được refresh thì morgan sẽ trả về những thông số liên quan đến quá trình load trang. Có thể dùng để debug khi cần thiết. Do đó ta cài với mode --save-dev.
+### 2.2.1. Cài đặt morgan
+
+    npm install --save-dev morgan
+
+Thêm 2 dòng sau vào file app.js của chúng ta nhé!
+
+    // gọi package morgan
+    var morgan = require('morgan')
+ 
+    // Sử dụng morgan với "combined"
+    app.use(morgan('combined'))
+
+
+**Chú ý:**
+Thông thường khi import package thì nên để trước dòng `const app = express()`, nếu không thì đa phần các package sau khi import không có tác dụng. Trong tường hợp morgan sẽ là: 
+
+    const morgan = require('morgan')
+    const app = express()
+    app.use(morgan('combined'))
 
