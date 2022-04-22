@@ -212,4 +212,8 @@ app.get('/', function(req, res){
 ```
     
 * Lưu ý: Khi gọi css như này thì file header, footer.handebars cũng sẽ ảnh hưởng.
+
 ## 4.3. Thêm css cho header và footer   
+Mình chưa search được hướng dẫn chi tiết cho việc này.
+Nên hiện gọi file header.css và footer.css trực tiếp trong main.handlebars bằng link.
+Độ ưu tiên của 2 file này sẽ thấp hơn so với home.css và news.css
