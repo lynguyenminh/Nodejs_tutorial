@@ -99,27 +99,28 @@ Thông thường khi import package thì nên để trước dòng `const app = 
     app.use(morgan('combined'))
 
 # 3. Render giao diện bằng express-handlebars
+Docs: https://www.npmjs.com/package/express-handlebars
 ## 3.1. Cài express-handlebars
 
     npm install --save express-handlebars
 
 ## 3.2. Cấu trúc thư mục khi sử dụng express-handlebars 
-Cần chú ý kĩ cấu trúc thư mục của views, đây là thư mục mặc định của express-handlebars.
+Cần chú ý kĩ cấu trúc thư mục của views, đây là thư mục mặc định của express-handlebars. Phần handlebars này chỉ thao tác với folder views này thôi.
 
     views
     ├── home.handlebars
     ├── news.handlebars
-    └── layouts
-        └── main.handlebars
+    ├── layouts
+    |   └── main.handlebars
     └── partials
         ├── header.handlebars
-        ├── footer.handlebars
+        └── footer.handlebars
 
     
 Trong cấu trúc này:
-* main.handlebars là file bố cục của toàn bộ trang web. Nó quy định header, body, footer đặt ở đâu trong trang web.
-* header, footer.handlebars là code riêng cho từng phần, từng chức năng, sẽ được gọi lại trong main.handlebars.
-* home, news.handlebars là nội dung chính trong từng file.
+* main.handlebars là file bố cục của toàn bộ trang web. Nó quy định header, body, footer đặt ở đâu trong trang web. Khi gọi hàm res.render() thì nó sẽ vào file này để lấy bố cục.
+* header, footer.handlebars là code riêng cho từng phần, từng chức năng cố định xuất hiện đồng thời ở nhiều trang như phần header, footer, login,... Chúng ta quy định vị trí nó xuất hiện trong file main.handlebars.
+* home, news.handlebars là nội dung chính của từng trang trong hệ thống chúng ta. Trong tường hợp này, ta xây dụng hệ thống có 2 phần là trang chủ và trang tin tức. Ta sẽ gọi lại file này trong hàm res.render().
 
 main.handlebars
 
@@ -135,7 +136,7 @@ main.handlebars
             // gọi lại file header
             {{> header}}
 
-            // phần thân của web, trong file này thì ghi body, lúc render thì gọi file home hay news.handlebars
+            // phần thân của web, trong file này thì ghi body, lúc res.render thì gọi file home hay news.handlebars
             {{{ body }}}
 
             // gọi lại file footer
@@ -152,7 +153,7 @@ main.handlebars
     app.engine('handlebars', engine());
     app.set('view engine', 'handlebars');
 
-    // xác định thu mục views cho handlebars
+    // xác định path của thư mục views cho handlebars
     app.set('views', './src/views');
 
     // Render ra html để hiển thị cho người dùng. Nó sẽ render ra file main.handlebars, thay chỗ {{{body}}} thành file truyền trong hàm render.
@@ -162,3 +163,53 @@ main.handlebars
     app.get('/tin_tuc', function(req, res){
         res.render('news')
     })
+
+
+# 4. Thêm css vào dự án
+tutorial link:  https://www.youtube.com/watch?v=o4njTeKjGWQ&ab_channel=EsterlingAccime
+
+## 4.1. File tĩnh
+File tĩnh là file có thể gọi trực tiếp ra trình duyệt bằng url. Kiểu kiểu như sau khi khai báo file tĩnh, nhập vào khung search: https://localhost:5000/img/avatar.png thì có bức ảnh ./img/avatar.png ở server hiển thị lên màn hình.
+
+Tại sao phải sử dụng file tĩnh?
+Có nhiều lí do nhưng trong nội dung này ta quan tâm tới cách thêm css. Handlebars chỉ thao tác với thư mục views, mà trong views không có chỗ nào phù hợp để chứa file css, do đó ta phải gọi file css từ bên ngoài. Với đặt tính của file tĩnh, ta thích gọi chỗ nào cũng được, nên dùng nó để chứa code css cho dự án.
+
+
+## 4.2. Cách thêm code css vào hệ thống
+
+Cấu trúc thư mục: 
+
+    src
+    └── public
+        └── css
+            ├── home.css
+            └── news.css
+
+* Khai báo file tĩnh trong app.js
+
+```
+app.use(express.static('./src' + '/public'));
+```
+
+
+* Link với file css trong file main.handlebars
+
+```
+// trong css/{{style}} thì style là biến, đổi thành file css mong muốn khi code phần routes
+
+<link rel="stylesheet" type="text/css" href="css/{{style}}" />
+```
+
+* Gọi file css khi routes
+
+```
+// gọi home.css cho page home
+app.get('/', function(req, res){
+    res.render('home', {
+        style: 'home.css'
+    })
+})
+```
+    
+* Lưu ý: Khi gọi css như này thì file header, footer.handebars cũng sẽ ảnh hưởng.
+## 4.3. Thêm css cho header và footer   
